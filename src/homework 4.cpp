@@ -407,7 +407,7 @@ HRESULT InitDevice() {
   if (FAILED(hr)) return hr;
 
   // Load the Texture
-  hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"test.jpg", NULL, 
+  hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"textures/test.jpg", NULL, 
                                               NULL, &g_pTextureRV, NULL);
   if (FAILED(hr)) return hr;
 
@@ -470,11 +470,11 @@ HRESULT InitDevice() {
   g_pd3dDevice->CreateDepthStencilState(&DS_ON, &ds_on);
   g_pd3dDevice->CreateDepthStencilState(&DS_OFF, &ds_off);
 
-  level1.init("level.bmp");
-  level1.init_texture(g_pd3dDevice, L"wall1.jpg");
-  level1.init_texture(g_pd3dDevice, L"wall2.jpg");
-  level1.init_texture(g_pd3dDevice, L"floor.jpg");
-  level1.init_texture(g_pd3dDevice, L"ceiling.jpg");
+  level1.init("maps/level.bmp");
+  level1.init_texture(g_pd3dDevice, L"textures/wall1.jpg");
+  level1.init_texture(g_pd3dDevice, L"textures/wall2.jpg");
+  level1.init_texture(g_pd3dDevice, L"textures/floor.jpg");
+  level1.init_texture(g_pd3dDevice, L"textures/ceiling.jpg");
 
   return S_OK;
 }
