@@ -12,9 +12,9 @@ Texture2D txDepth: register(t1);
 SamplerState samLinear: register(s0);
 
 cbuffer ConstantBuffer: register(b0) {
-  matrix World;
-  matrix View;
-  matrix Projection;
+  matrix world;
+  matrix view;
+  matrix projection;
 };
 
 
@@ -36,9 +36,9 @@ struct PS_INPUT {
 //--------------------------------------------------------------------------------------
 PS_INPUT VS(VS_INPUT input) {
   PS_INPUT output = (PS_INPUT)0;
-  output.Pos = mul( input.Pos, World );
-  output.Pos = mul( output.Pos, View );
-  output.Pos = mul( output.Pos, Projection );
+  output.Pos = mul( input.Pos, world );
+  output.Pos = mul( output.Pos, view );
+  output.Pos = mul( output.Pos, projection );
   output.Tex = input.Tex;
     
   return output;

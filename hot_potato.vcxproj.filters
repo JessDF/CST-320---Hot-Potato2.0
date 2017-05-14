@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="homework 4.cpp" />
+    <ClCompile Include="socket.cpp" />
+    <ClCompile Include="address.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="event.h" />
+    <ClInclude Include="global.h" />
+    <ClInclude Include="groundwork.h" />
+    <ClInclude Include="init.h" />
+    <ClInclude Include="load.h" />
+    <ClInclude Include="render.h" />
+    <ClInclude Include="vector.h" />
+    <ClInclude Include="vertex.h" />
+    <CLInclude Include="resource.h">
+      <Filter>Resources</Filter>
+    </CLInclude>
+    <ClInclude Include="socket.h" />
+    <ClInclude Include="address.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\level(newest).bmp">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\mrP.gif">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\msP.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\potato.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\sky.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\weird.jpg">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="assets\coolWall.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Shaders">
+      <UniqueIdentifier>{2544a5b8-913d-4d3e-81c2-e479b6c46b73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{7fae8ebf-fa39-4670-b18a-e492daa94098}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resources">
+      <UniqueIdentifier>{9636148b-7d47-41e1-8761-16134dc6143c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader.fx">
+      <Filter>Shaders</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\ccsphere.cmp">
+      <Filter>Assets</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="homework 8.rc">
+      <Filter>Resources</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
