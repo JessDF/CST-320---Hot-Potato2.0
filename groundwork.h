@@ -91,48 +91,6 @@ XMFLOAT3 mul(XMFLOAT3 a, XMMATRIX &m) {
 
     return a;
 }
-//****************************************************88
-class billboard
-{
-public:
-    billboard()
-    {
-        position = XMFLOAT3(0, 0, 10);
-        scale = 1;
-        transparency = 1;
-    }
-    XMFLOAT3 position; //obvious
-    float scale;		//in case it can grow
-    float transparency; //for later use
-    XMMATRIX get_matrix(XMMATRIX &ViewMatrix)
-    {
-
-        XMMATRIX view, R, T, S;
-        view = ViewMatrix;
-        //eliminate camera translation:
-        view._41 = view._42 = view._43 = 0.0;
-        XMVECTOR det;
-        R = XMMatrixInverse(&det, view);//inverse rotation
-        T = XMMatrixTranslation(position.x, position.y, position.z);
-        S = XMMatrixScaling(scale, scale, scale);
-        return S*R*T;
-    }
-    
-    float distanceZ(XMMATRIX &ViewMatrix) {
-
-        XMMATRIX view = ViewMatrix;
-        XMFLOAT3 res = mul(position, view); // Multiplication of position float3 and view matrix
-
-        float cam_dist = res.z * position.z;
-    }
-
-
-
-    XMMATRIX get_matrix_y(XMMATRIX &ViewMatrix) //enemy-type
-    {
-
-    }
-};
 
 //*****************************************************************************
 //lets assume a wall is 10/10 big!
@@ -169,6 +127,76 @@ class wall
         return T_offset * R * T;
         }
   };
+
+class billboard
+{
+public:
+    billboard()
+    {
+        position = XMFLOAT3(0, 0, 0);
+        scale = 1;
+        transparency = 1;
+    }
+    XMFLOAT3 position; //obvious
+    float scale;		//in case it can grow
+    float transparency; //for later use
+    XMMATRIX get_matrix(XMMATRIX &ViewMatrix)
+    {
+
+        XMMATRIX view, R, T, S;
+        view = ViewMatrix;
+        //eliminate camera translation:
+        view._41 = view._42 = view._43 = 0.0;
+        XMVECTOR det;
+        R = XMMatrixInverse(&det, view);//inverse rotation
+        T = XMMatrixTranslation(position.x, position.y, position.z);
+        S = XMMatrixScaling(scale, scale, scale);
+        return S*R*T;
+    }
+
+    float distanceZ(XMMATRIX &ViewMatrix) {
+
+        XMMATRIX view = ViewMatrix;
+        XMFLOAT3 res = mul(position, view); // Multiplication of position float3 and view matrix
+
+        float cam_dist = res.z * position.z;
+    }
+
+
+
+    XMMATRIX get_matrix_y(XMMATRIX &ViewMatrix) //enemy-type
+    {
+
+    }
+};
+
+class bullet
+{
+public:
+    XMFLOAT3 pos, imp;
+    bullet()
+    {
+        pos = imp = XMFLOAT3(0, 0, 0);
+    }
+    XMMATRIX getmatrix(float elapsed, XMMATRIX &view)
+    {
+
+        pos.x = pos.x + imp.x *(elapsed / 100000.0);
+        pos.y = pos.y + imp.y *(elapsed / 100000.0);
+        pos.z = pos.z + imp.z *(elapsed / 100000.0);
+
+        XMMATRIX R, T;
+        R = view;
+        R._41 = R._42 = R._43 = 0.0;
+        XMVECTOR det;
+        R = XMMatrixInverse(&det, R);
+        T = XMMatrixTranslation(pos.x, pos.y, pos.z);
+
+        return R * T;
+    }
+};
+//*****************************************************************************
+
 //********************************************************************************************
 class Billboard {
   const double IMPULSE_CONTROL = 100000.0;
@@ -182,7 +210,7 @@ class Billboard {
 
     Billboard() {
       imp = XMFLOAT3(0, 0, 0);
-      pos = XMFLOAT3(0, 0, 5);
+      pos = XMFLOAT3(0, FLT_MAX, 0);
       scale = 1;
       transparency = 1;
     }
@@ -482,119 +510,6 @@ class level
           pos.x = x;
           pos.y = y;
           pos.z = z;
-      }
-  };
-  class Potato
-  {
-  private:
-      enum POTATO_STATE { ATTACHED_TO_PLAYER, THROWN, ATTACHED_TO_TARGET };
-
-      POTATO_STATE state;
-      XMFLOAT3 pos;
-      XMFLOAT3 dir;
-      Target myTarget;
-
-  public:
-      Potato()
-      {
-          state = ATTACHED_TO_PLAYER;
-          pos = XMFLOAT3(0, 0, 0);
-          dir = XMFLOAT3(0, 0, 0);
-      }
-      void Throw(camera* cam)
-      {
-          if (state == ATTACHED_TO_PLAYER)
-          {
-              state = THROWN;
-              pos = -cam->position;
-              dir = XMFLOAT3(
-                  cos(cam->rotation.x)*sin(-cam->rotation.y),
-                  sin(cam->rotation.x),
-                  cos(cam->rotation.x)*cos(-cam->rotation.y)
-              );
-          }
-      }
-      static bool Collided(Potato* p, Target t)
-      {
-          XMFLOAT3 d = p->pos - t.getPos(); /*distance between potato and target*/
-          float tolerance = 2;
-          if (Length(d) <= tolerance) {
-              return true; // If true then a hit
-          }
-          return false;
-      }
-      static bool Collided(Potato* p, bitmap* leveldata)
-      {
-          /* Collision detection similar to camera and bitmap */
-          if (p->state == THROWN)
-          {
-              float xoffset = 50.5;
-              float zoffset = -2.5;
-              float x = p->pos.x / 2;
-              float z = p->pos.z / 2;
-
-              BYTE blue = leveldata->get_pixel(x + xoffset, z + zoffset, 0);
-
-              if (blue > 0) {
-                  return true;
-              }
-          }
-          return false;
-      }
-
-      void Update(long elapsed, bitmap* leveldata, Target* targetArr, int targetArrSize) //<-- targetArr could also be a vector
-      {
-          if (state == THROWN)
-          {
-              float time = elapsed / 100000.0;
-
-              float speed = 0.3; //Was at 1
-
-              dir.y -= 0.004; // Makes it go downwards
-
-              pos.x += speed * time *dir.x;
-              pos.y += speed *time *dir.y;
-              pos.z += speed *time*dir.z;
-
-              if (pos.y < -0.5) {
-                  dir.y *= -0.9;
-              }
-
-              int i = 0;
-              for (; i < targetArrSize && !Collided(this, targetArr[i]); ++i);
-
-              if (i < targetArrSize) //<-- not at end of array = hit a target
-              {
-                  state = ATTACHED_TO_TARGET;
-                  myTarget = targetArr[i];
-              }
-              else if (Collided(this, leveldata) == true) //<-- didn't hit a target
-              {
-                  //hit a wall
-                  state = ATTACHED_TO_PLAYER;
-              }
-          }
-      }
-
-      XMMATRIX getWorldMatrix(camera* cam, Target* target)
-      {
-          switch (state)
-          {
-          case ATTACHED_TO_PLAYER:
-              /*if visible to player (player can see potato when holding it), create desired matrix, otherwise, return a zero matrix*/
-              return XMMATRIX(
-                  0, 0, 0, 0,
-                  0, 0, 0, 0,
-                  0, 0, 0, 0,
-                  0, 0, 0, 0);
-          case THROWN:
-              return XMMatrixTranslation(pos.x, pos.y, pos.z); /*include scale if necessary. include -cam.rotation.y and -cam.rotation.x if billboard*/
-          case ATTACHED_TO_TARGET:
-              return XMMatrixTranslation(target->getPos().x, target->getPos().y, target->getPos().z); /*again, include scale if necessary. include -rotations if billboard*/
-                                                                                                      /*also, could use offsets to put potato relative to target (not have potato on center of target), but much harder. */
-                                                                                                      /*Better if that is done during office hours.*/
-          }
-          return XMMatrixIdentity();
       }
   };
 

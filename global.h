@@ -5,6 +5,10 @@
 #include <xnamath.h>
 
 #include "groundwork.h"
+#include "potato.h"
+
+#define NUM_PLAYERS 6
+#define ROCKETRADIUS				10
 
 extern HINSTANCE                           g_hInst;
 extern HWND                                g_hWnd;
@@ -67,10 +71,7 @@ extern bool IN_MENU;
 
 extern float Dis[1];
 
-extern Billboard *players[5];
-extern XMFLOAT4 positions[7];
-
-extern Target targets[];
+extern Billboard *players[NUM_PLAYERS];
 
 extern Potato potato;
 
@@ -78,5 +79,9 @@ extern XMFLOAT3 menu_position[];
 extern XMFLOAT3 menu_position_shown[];
 extern XMMATRIX menu_scaling[];
 extern XMMATRIX menu_scaling_shown[];
+
+extern bool menu;
+extern int active_players;
+extern int me;
 
 #endif

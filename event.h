@@ -98,6 +98,7 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
         break;
 
     case 32: // Space
+        if (active_players == 6) menu = false;
         break;
 
     case 37: // Left

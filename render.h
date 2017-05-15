@@ -5,6 +5,7 @@
 #include <xnamath.h>
 
 #include "global.h"
+#include "potato.h"
 
 long elapsed;
 
@@ -55,72 +56,42 @@ XMMATRIX menu_scaling_hidden[] = {
     XMMatrixScaling(0.002, .0005, .001),
 };
 
-bool menu_shown[] = { false, false, false, false, false, false, false, true };
-
-
-//XMMATRIX view;
-//XMMATRIX world;
+bool menu_shown[] = { false, false, false, false, false, false, true, true };
 
 void RenderGame() {
-    XMMATRIX projection = XMMatrixTranspose(g_Projection);
     ConstantBuffer constant_buffer = ConstantBuffer();
+    XMMATRIX aoffset, projection, Ry, scaling, view, world;
+    
     cam.animation(level1.get_bitmap());
-    XMMATRIX view = cam.get_matrix(&g_View);
 
-    for (int i = 0; i < 5; i++) {
-        Dis[i] = players[i]->distanceZ(view);
-    }
+    potato.Update(elapsed, level1.get_bitmap(), players, NUM_PLAYERS);
 
-    sort(begin(Dis), end(Dis));
+    world = potato.getWorldMatrix(&cam);
+    Ry = XMMatrixRotationY(-cam.rotation.y);
+    scaling = XMMatrixScaling(0.1, 0.1, 0.1);
+    aoffset = XMMatrixTranslation(0, 0, -.001);
+    world = scaling * aoffset * Ry * world;
 
-    static billboard bill;
-    bill.position = rocket_position;
-    XMMATRIX world = bill.get_matrix(view);
-    XMMATRIX Ry = XMMatrixRotationY(-cam.rotation.y);
-    XMMATRIX scaling = XMMatrixScaling(0.1, 0.1, 0.1);
+    view = cam.get_matrix(&g_View);
 
-    potato.Update(elapsed, level1.get_bitmap(), targets, NUM_BILLBOARDS);
-    world = potato.getWorldMatrix(&cam, targets);
-    world = scaling * Ry * world;
+    projection = XMMatrixTranspose(g_Projection);
 
     constant_buffer.world = XMMatrixTranspose(world);
     constant_buffer.view = XMMatrixTranspose(view);
     constant_buffer.projection = XMMatrixTranspose(g_Projection);
-    constant_buffer.info = XMFLOAT4(1, 1, 1, 1);
+    
     g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
     g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
     g_pImmediateContext->PSSetShaderResources(0, 1, &smokeTex);
     g_pImmediateContext->VSSetShaderResources(0, 1, &smokeTex);
-    g_pImmediateContext->PSSetShaderResources(1, 1, &g_pTextureRV);
-    g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, &constant_buffer,
-        0, 0);
+    g_pImmediateContext->UpdateSubresource(g_pCBuffer, 0, NULL, 
+      &constant_buffer, 0, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pCBuffer);
     g_pImmediateContext->PSSetConstantBuffers(0, 1, &g_pCBuffer);
-
     g_pImmediateContext->IASetVertexBuffers(0, 1, &g_pBillboardBuffer, &stride,
         &offset);
 
     g_pImmediateContext->Draw(12, 0);
-
-    //blendstate:
-    D3D11_BLEND_DESC blendStateDesc;
-    ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
-    blendStateDesc.AlphaToCoverageEnable = TRUE;
-    blendStateDesc.IndependentBlendEnable = FALSE;
-    blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
-    blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
-    blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
-    blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
-    blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
-    blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
-    blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    blendStateDesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
-    g_pd3dDevice->CreateBlendState(&blendStateDesc, &g_BlendState);
-
-
-    float blendFactor[] = { 0, 0, 0, 0 };
-    UINT sampleMask = 0xffffffff;
-    g_pImmediateContext->OMSetBlendState(g_BlendState, blendFactor, sampleMask);
 
     g_pImmediateContext->OMSetDepthStencilState(ds_on, 1);
 }
@@ -208,37 +179,39 @@ void RenderMenu()
 
 bool RenderPotatoes() {
     ConstantBuffer constant_buffer = ConstantBuffer();
-    float positions[22];
+    float state[22];
     Address sender;
-    int bytes_read = sock.Receive(sender, positions, 88);
-    int me = (int)(positions[21]);
-    //menu_shown[me] = true;
+    int bytes_read = sock.Receive(sender, state, 88);
 
     int start;
     if (bytes_read > 0) {
-        int player = 0;
+        me = (int)(state[21]);
+        menu_shown[me] = true;
         for (int i = 0; i < 5; i++) {
             start = i * 3;
-            menu_shown[i] = !(positions[start] == FLT_MAX);
+            menu_shown[i] = !(state[start] == FLT_MAX);
             if (i != me) 
             {
-                players[player]->pos.x = positions[start + 0];
-                players[player]->pos.y = positions[start + 1];
-                players[player]->pos.z = positions[start + 2];
-                player++;
+                players[i]->pos.x = state[start + 0];
+                players[i]->pos.y = state[start + 1];
+                players[i]->pos.z = state[start + 2];
+            }
+            else 
+            {
+                players[i]->pos.x = cam.position.x;
+                players[i]->pos.y = cam.position.y;
+                players[i]->pos.z = cam.position.z;
             }
         }
     }
 
-    int player = 0;
     for (int i = 0; i < 5; i++) {
-        if (i != 4) {
+        if (i != me && me < 6) {
             XMMATRIX view = cam.get_matrix(&XMMatrixIdentity());
-            XMMATRIX world = players[player]->GetMatrix(elapsed, view);
+            XMMATRIX world = players[i]->GetMatrix(elapsed, view);
             constant_buffer.world = XMMatrixTranspose(world);
             constant_buffer.view = XMMatrixTranspose(view);
             constant_buffer.projection = XMMatrixTranspose(g_Projection);
-            player++;
 
             g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
             g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
@@ -273,6 +246,10 @@ bool Render()
     g_pImmediateContext->OMSetRenderTargets(1, &g_pRenderTargetView,
         g_pDepthStencilView);
 
+    float blendFactor[] = { 0, 0, 0, 0 };
+    UINT sampleMask = 0xffffffff;
+    g_pImmediateContext->OMSetBlendState(g_BlendState, blendFactor, sampleMask);
+
     g_pImmediateContext->VSSetShader(g_pVertexShader, NULL, 0);
     g_pImmediateContext->PSSetShader(g_pPixelShader, NULL, 0);
     g_pImmediateContext->VSSetConstantBuffers(0, 1, &g_pCBuffer);
@@ -281,12 +258,13 @@ bool Render()
 
     RenderGame();
     RenderLevel();
-    RenderMenu();
+    if (menu) RenderMenu();
     if (!RenderPotatoes()) return false;
 
     g_pSwapChain->Present(0, 0);
-    float data[] = { cam.position.x, cam.position.y, cam.position.z, -FLT_MAX, 0.0f, 0.0f };
+    float data[] = { -cam.position.x, -cam.position.y, -cam.position.z, -FLT_MAX, 0.0f, 0.0f };
     sock.Send(Address(L"10.0.0.8", 27015), data, 24);
+    return true;
 }
 
 #endif

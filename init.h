@@ -328,9 +328,6 @@ HRESULT InitDevice() {
         NULL, &g_pMrsPTexture, NULL);
     if (FAILED(hr)) return hr;
 
-    textures[0] = g_pMrPTexture;
-    textures[1] = g_pMrsPTexture;
-
     hr = D3DX11CreateShaderResourceViewFromFile(g_pd3dDevice, L"assets/sky.jpg", NULL,
         NULL, &g_pTextureRV, NULL);
     if (FAILED(hr)) return hr;
@@ -409,7 +406,20 @@ HRESULT InitDevice() {
         players[i]->pos.z = players[i]->pos.z + (i * 2);
     }
 
-    //start_client("10.11.120.37", 27015);
+    //blendstate:
+    D3D11_BLEND_DESC blendStateDesc;
+    ZeroMemory(&blendStateDesc, sizeof(D3D11_BLEND_DESC));
+    blendStateDesc.AlphaToCoverageEnable = TRUE;
+    blendStateDesc.IndependentBlendEnable = FALSE;
+    blendStateDesc.RenderTarget[0].BlendEnable = TRUE;
+    blendStateDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+    blendStateDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+    blendStateDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+    blendStateDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ZERO;
+    blendStateDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+    blendStateDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    blendStateDesc.RenderTarget[0].RenderTargetWriteMask = 0x0F;
+    g_pd3dDevice->CreateBlendState(&blendStateDesc, &g_BlendState);
 }
 
 bool InitNetwork()

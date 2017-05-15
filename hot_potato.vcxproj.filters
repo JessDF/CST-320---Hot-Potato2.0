@@ -19,6 +19,7 @@
     </CLInclude>
     <ClInclude Include="socket.h" />
     <ClInclude Include="address.h" />
+    <ClInclude Include="potato.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\level(newest).bmp">

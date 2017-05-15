@@ -52,8 +52,6 @@ ID3D11ShaderResourceView*           g_pPlayer4 = NULL;
 ID3D11ShaderResourceView*           g_pPlayer5 = NULL;
 ID3D11ShaderResourceView*           g_pPlayer6 = NULL;
 
-ID3D11ShaderResourceView            *textures[2];
-
 ID3D11SamplerState*                 g_pSamplerLinear = NULL;
 
 ID3D11BlendState* g_BlendState;
@@ -65,16 +63,13 @@ XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f);
 
 camera								cam;
 level								level1;
-XMFLOAT3							rocket_position;
 
 int model_vertex_anz = 0;
-const int NUM_BILLBOARDS = 1;
 
 bool IN_MENU = true;
 
-float Dis[NUM_BILLBOARDS];
-
-Billboard *players[5] = {
+Billboard *players[6] = {
+    new Billboard(),
     new Billboard(),
     new Billboard(),
     new Billboard(),
@@ -83,7 +78,14 @@ Billboard *players[5] = {
 };
 
 Potato potato;
-Target targets[NUM_BILLBOARDS];
+
+int potato_owner = 0;
+
+bool menu = true;
+
+int active_players = 0;
+
+int me = 6;
 
 /*------------------------------------------------------------------------------
 Entry point to the program. Initializes everything and goes into a message
