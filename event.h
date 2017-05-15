@@ -39,19 +39,19 @@ void OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
         break;
 
     case 37: // Left
-        billboards[1]->imp.x = 0;
+        players[1]->imp.x = 0;
         break;
 
     case 38: // Up
-        billboards[1]->imp.z = 0;
+        players[1]->imp.z = 0;
         break;
 
     case 39: // Right
-        billboards[1]->imp.x = 0;
+        players[1]->imp.x = 0;
         break;
 
     case 40: // Down
-        billboards[1]->imp.z = 0;
+        players[1]->imp.z = 0;
         break;
 
     case 65: // A
@@ -63,19 +63,19 @@ void OnKeyUp(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
         break;
 
     case 73: // I
-        billboards[0]->imp.z = 0;
+        players[0]->imp.z = 0;
         break;
 
     case 74: // J
-        billboards[0]->imp.x = 0;
+        players[0]->imp.x = 0;
         break;
 
     case 75: // K
-        billboards[0]->imp.z = 0;
+        players[0]->imp.z = 0;
         break;
 
     case 76: // L
-        billboards[0]->imp.x = 0;
+        players[0]->imp.x = 0;
         break;
 
     case 83: // S
@@ -101,19 +101,19 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
         break;
 
     case 37: // Left
-        billboards[1]->imp.x -= .1;
+        players[1]->imp.x -= .1;
         break;
 
     case 38: // Up
-        billboards[1]->imp.z += .1;
+        players[1]->imp.z += .1;
         break;
 
     case 39: // Right
-        billboards[1]->imp.x += .1;
+        players[1]->imp.x += .1;
         break;
 
     case 40: // Down
-        billboards[1]->imp.z -= .1;
+        players[1]->imp.z -= .1;
         break;
 
     case 65: // A
@@ -125,19 +125,19 @@ void OnKeyDown(HWND hwnd, UINT vk, BOOL fDown, int cRepeat, UINT flags) {
         break;
 
     case 73: // I
-        billboards[0]->imp.z += .1;
+        players[0]->imp.z += .1;
         break;
 
     case 74: // J
-        billboards[0]->imp.x -= .1;
+        players[0]->imp.x -= .1;
         break;
 
     case 75: // K
-        billboards[0]->imp.z -= .1;
+        players[0]->imp.z -= .1;
         break;
 
     case 76: // L
-        billboards[0]->imp.x += .1;
+        players[0]->imp.x += .1;
         break;
 
     case 83: // S

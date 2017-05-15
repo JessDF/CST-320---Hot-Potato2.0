@@ -181,7 +181,7 @@ class Billboard {
     XMFLOAT3 pos; //obvious
 
     Billboard() {
-      imp = XMFLOAT3(0, 0, .1);
+      imp = XMFLOAT3(0, 0, 0);
       pos = XMFLOAT3(0, 0, 5);
       scale = 1;
       transparency = 1;

@@ -11,6 +11,8 @@
 #include "render.h"
 #include "vertex.h"
 
+#define NUM_PLAYERS 6
+
 /*------------------------------------------------------------------------------
 Global Variables
 *///----------------------------------------------------------------------------
@@ -64,7 +66,6 @@ XMFLOAT4                            g_vMeshColor(0.7f, 0.7f, 0.7f, 1.0f);
 camera								cam;
 level								level1;
 XMFLOAT3							rocket_position;
-#define ROCKETRADIUS				10
 
 int model_vertex_anz = 0;
 const int NUM_BILLBOARDS = 1;
@@ -73,8 +74,14 @@ bool IN_MENU = true;
 
 float Dis[NUM_BILLBOARDS];
 
-Billboard *billboards[NUM_BILLBOARDS];
-XMFLOAT4 positions[NUM_BILLBOARDS];
+Billboard *players[5] = {
+    new Billboard(),
+    new Billboard(),
+    new Billboard(),
+    new Billboard(),
+    new Billboard()
+};
+
 Potato potato;
 Target targets[NUM_BILLBOARDS];
 
@@ -87,6 +94,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
+
+    if (!InitNetwork()) return 0;
 
     if (FAILED(InitWindow(hInstance, nCmdShow))) return 0;
 
@@ -109,7 +118,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
         }
         else
         {
-            Render();
+            if (!Render()) return 0;
         }
     }
 

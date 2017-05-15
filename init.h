@@ -5,7 +5,7 @@
 #include "load.h"
 #include "socket.h"
 
-#define PORT  27015
+#define PORT  27016
 #define HEIGHT 480
 #define WIDTH 640
 
@@ -404,24 +404,22 @@ HRESULT InitDevice() {
     level1.init_texture(g_pd3dDevice, L"assets/ceiling.jpg");
 
     //srand(NULL);
-    for (int i = 0; i < NUM_BILLBOARDS; i++) {
-        billboards[i] = new Billboard;
-        billboards[i]->pos.z = billboards[i]->pos.z + (i * 2);
+    for (int i = 0; i < 5; i++) {
+        players[i] = new Billboard;
+        players[i]->pos.z = players[i]->pos.z + (i * 2);
     }
 
     //start_client("10.11.120.37", 27015);
 }
 
 bool InitNetwork()
-{
+{  
 #if PLATFORM == PLATFORM_WINDOWS
     WSADATA WsaData;
-    return WSAStartup(MAKEWORD(2, 2), &WsaData) == NO_ERROR;
-#else
-    return true;
+    if(!WSAStartup(MAKEWORD(2, 2), &WsaData) == NO_ERROR) return false;
 #endif
 
-    if (!sock.Open(PORT)) return false;
+    return sock.Open(PORT);
 }
 
 /*------------------------------------------------------------------------------

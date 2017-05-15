@@ -67,8 +67,8 @@ extern bool IN_MENU;
 
 extern float Dis[1];
 
-extern Billboard *billboards[1];
-extern XMFLOAT4 positions[1];
+extern Billboard *players[5];
+extern XMFLOAT4 positions[7];
 
 extern Target targets[];
 

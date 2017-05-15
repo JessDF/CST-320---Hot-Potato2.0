@@ -15,6 +15,7 @@ cbuffer ConstantBuffer: register(b0) {
   matrix world;
   matrix view;
   matrix projection;
+  float4 info;
 };
 
 
@@ -36,6 +37,12 @@ struct PS_INPUT {
 //--------------------------------------------------------------------------------------
 PS_INPUT VS(VS_INPUT input) {
   PS_INPUT output = (PS_INPUT)0;
+
+  float3 pos = input.Pos;
+  pos.x = info.x;
+  pos.y = info.y;
+  pos.z = info.z;
+
   output.Pos = mul( input.Pos, world );
   output.Pos = mul( output.Pos, view );
   output.Pos = mul( output.Pos, projection );
