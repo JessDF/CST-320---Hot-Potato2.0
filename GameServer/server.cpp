@@ -12,7 +12,7 @@
 #define DEFAULT_PORT 27015
 #define IP_LENGTH 16
 #define NUM_PLAYERS 6
-#define NUM_POSITIONS 22
+#define NUM_POSITIONS 23
 #define PACKET_SIZE 6
 #define D_SCL_SECURE_NO_WARNINGS
 
@@ -38,6 +38,7 @@ float all_positions[NUM_POSITIONS] = {
     FLT_MAX,
     FLT_MAX,
     FLT_MAX,
+    0.0f,
     0.0f
 };
 
@@ -73,7 +74,7 @@ void Broadcast() {
             wchar_t ips_temp[NUM_PLAYERS][IP_LENGTH];
             std::copy(&ips[0][0], &ips[0][0] + IP_LENGTH * 6, &ips_temp[0][0]);
 
-            float all_positions_temp[NUM_POSITIONS + 1];
+            float all_positions_temp[NUM_POSITIONS];
             std::copy(all_positions, all_positions + NUM_POSITIONS, all_positions_temp);
 
             lock.unlock();
@@ -131,12 +132,13 @@ void ProcessPacket(wchar_t addr[], float positions[]) {
     all_positions[index + 1] = positions[1];
     all_positions[index + 2] = positions[2];
 
-    if (positions[3] != FLT_MAX) {
+   // if (positions[3] != FLT_MAX) {
         all_positions[18] = positions[3];
         all_positions[19] = positions[4];
         all_positions[20] = positions[5];
         all_positions[22] = positions[6];
 
+        /*
         printf("%s %f %f %f %f %f %f\n", addr, positions[0], positions[1], positions[2],
             positions[3], positions[4], positions[5]);
         printf("%f %f %f\n", all_positions[0], all_positions[1],
@@ -153,7 +155,9 @@ void ProcessPacket(wchar_t addr[], float positions[]) {
             all_positions[17]);
         printf("potato %f %f %f\n\n", all_positions[18], all_positions[19],
             all_positions[20]);
-    }
+            */
+        printf("owner %f\n", positions[6]);
+ //   }
 }
 
 void ReceivePackets()
@@ -162,7 +166,7 @@ void ReceivePackets()
         float positions[PACKET_SIZE];
 
         Address sender;
-        int bytes_read = sock.Receive(sender, positions, sizeof(positions));
+        int bytes_read = sock.Receive(sender, positions, 28);
         if (bytes_read <= 0) continue;
 
         // process packet

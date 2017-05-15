@@ -15,7 +15,7 @@ class Potato
 
     public:
         XMFLOAT3 pos;
-        int owner = 0;
+        float owner = 0.0f;
 
         Potato()
         {

@@ -188,7 +188,7 @@ bool RenderPotatoes() {
     int start;
     if (bytes_read > 0) {
         me = (int)state[21];
-        owner = (int)state[21];
+        owner = (int)state[22];
         if (owner == me) was_owner = true;
         menu_shown[me] = true;
         for (int i = 0; i < 5; i++) {
@@ -267,6 +267,7 @@ bool Render()
 
     float potx = potato.pos.x;
     if (!was_owner) potx = FLT_MAX;
+    was_owner = false;
 
     g_pSwapChain->Present(0, 0);
     float data[] = {
@@ -278,7 +279,7 @@ bool Render()
         potato.pos.z,
         potato.owner,
     };
-    sock.Send(Address(L"10.0.0.8", 27015), data, 24);
+    sock.Send(Address(L"10.0.0.8", 27015), data, 28);
     return true;
 }
 
