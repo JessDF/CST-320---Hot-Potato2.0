@@ -17,7 +17,7 @@ void Address::init(wchar_t address[], unsigned short port)
     this->port = port;
 }
 
-void Address::GetAddress(wchar_t temp[]) const
+void Address::GetIp(wchar_t temp[]) const
 {
     wcsncpy_s(temp, 16, this->address, 16);
 }

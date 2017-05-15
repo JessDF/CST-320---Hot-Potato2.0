@@ -6,7 +6,7 @@ class Address
 public:
     Address();
     Address(wchar_t address[], unsigned short port);
-    void GetAddress(wchar_t temp[]) const;
+    void GetIp(wchar_t temp[]) const;
     unsigned short GetPort() const;
 private:
     void init(wchar_t address[], unsigned short port);

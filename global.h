@@ -8,7 +8,6 @@
 #include "potato.h"
 
 #define NUM_PLAYERS 6
-#define ROCKETRADIUS				10
 
 extern HINSTANCE                           g_hInst;
 extern HWND                                g_hWnd;
@@ -84,5 +83,7 @@ extern bool menu;
 extern int active_players;
 extern int me;
 extern int owner;
+
+GameState game_state;
 
 #endif
