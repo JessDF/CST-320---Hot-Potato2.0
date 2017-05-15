@@ -12,11 +12,11 @@
 #define DEFAULT_PORT 27015
 #define IP_LENGTH 16
 #define NUM_PLAYERS 6
-#define NUM_POSITIONS 21
+#define NUM_POSITIONS 22
 #define PACKET_SIZE 6
 #define D_SCL_SECURE_NO_WARNINGS
 
-double all_positions[NUM_POSITIONS] = {
+float all_positions[NUM_POSITIONS] = {
     FLT_MAX,
     FLT_MAX,
     FLT_MAX,
@@ -38,12 +38,11 @@ double all_positions[NUM_POSITIONS] = {
     FLT_MAX,
     FLT_MAX,
     FLT_MAX,
+    0.0f
 };
 
 std::mutex lock;
-wchar_t ips[NUM_PLAYERS][IP_LENGTH] = {
-    L"10.0.0.3",
-};
+wchar_t ips[NUM_PLAYERS][IP_LENGTH];
 Socket sock;
 std::stack<int> player_slots;
 
@@ -131,36 +130,12 @@ void ProcessPacket(wchar_t addr[], float positions[]) {
     all_positions[index] = positions[0];
     all_positions[index + 1] = positions[1];
     all_positions[index + 2] = positions[2];
+
     if (positions[3] != FLT_MAX) {
         all_positions[18] = positions[3];
         all_positions[19] = positions[4];
         all_positions[20] = positions[5];
-    }
-}
-
-void ReceivePackets()
-{
-    while (true) {
-        float positions[PACKET_SIZE];
-
-        Address sender;
-        int bytes_read = sock.Receive(sender, positions, sizeof(positions));
-        if (bytes_read <= 0) continue;
-
-        // process packet
-        wchar_t addr[IP_LENGTH];
-        sender.GetAddress(addr);
-        ProcessPacket(addr, positions);
-
-        /*
-        for (int i = 0; i < 5; i++) {
-            float positions3[6];
-            std::copy(positions2, positions2 + 6, positions3);
-            positions3[0] += rand() % 8 - 4;
-            positions3[2] += rand() % 8 - 4;
-            ProcessPacket(ips[i], positions3);
-        }
-        */
+        all_positions[22] = positions[6];
 
         printf("%s %f %f %f %f %f %f\n", addr, positions[0], positions[1], positions[2],
             positions[3], positions[4], positions[5]);
@@ -178,6 +153,22 @@ void ReceivePackets()
             all_positions[17]);
         printf("potato %f %f %f\n\n", all_positions[18], all_positions[19],
             all_positions[20]);
+    }
+}
+
+void ReceivePackets()
+{
+    while (true) {
+        float positions[PACKET_SIZE];
+
+        Address sender;
+        int bytes_read = sock.Receive(sender, positions, sizeof(positions));
+        if (bytes_read <= 0) continue;
+
+        // process packet
+        wchar_t addr[IP_LENGTH];
+        sender.GetAddress(addr);
+        ProcessPacket(addr, positions);
     }
 }
 

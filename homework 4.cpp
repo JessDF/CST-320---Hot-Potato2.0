@@ -87,6 +87,8 @@ int active_players = 0;
 
 int me = 6;
 
+int owner = 0;
+
 /*------------------------------------------------------------------------------
 Entry point to the program. Initializes everything and goes into a message
 processing loop. Idle time is used to render the scene.

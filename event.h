@@ -6,7 +6,7 @@
 #include "global.h"
 
 void OnLBD(HWND hwnd, BOOL fDoubleClick, int x, int y, UINT keyFlags) {
-    potato.Throw(&cam);
+    if (potato.owner == me) potato.Throw(&cam);
 }
 
 // This Function is called every time the Right Mouse Button is down

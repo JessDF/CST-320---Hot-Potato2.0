@@ -9,12 +9,14 @@ class Potato
         enum POTATO_STATE { ATTACHED_TO_PLAYER, THROWN, ATTACHED_TO_TARGET };
 
         POTATO_STATE state;
-        XMFLOAT3 pos;
         XMFLOAT3 dir;
         // Target myTarget;
         Billboard *myTarget;
 
     public:
+        XMFLOAT3 pos;
+        int owner = 0;
+
         Potato()
         {
             state = ATTACHED_TO_PLAYER;
@@ -98,6 +100,7 @@ class Potato
                 {
                     state = ATTACHED_TO_TARGET;
                     myTarget = targetArr[i];
+                    owner = i;
                 }
                 else if (Collided(this, leveldata) == true) //<-- didn't hit a target
                 {

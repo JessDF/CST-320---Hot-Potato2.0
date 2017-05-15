@@ -83,5 +83,6 @@ extern XMMATRIX menu_scaling_shown[];
 extern bool menu;
 extern int active_players;
 extern int me;
+extern int owner;
 
 #endif

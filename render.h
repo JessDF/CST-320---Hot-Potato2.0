@@ -12,6 +12,8 @@ long elapsed;
 UINT offset = 0;
 UINT stride = sizeof(SimpleVertex);
 
+boolean was_owner = false;
+
 XMFLOAT3 menu_position[] = {
     XMFLOAT3(-0.00405f, 0.002f, 0.01f),
     XMFLOAT3(-0.00405f, 0.001f, 0.01f),
@@ -179,13 +181,15 @@ void RenderMenu()
 
 bool RenderPotatoes() {
     ConstantBuffer constant_buffer = ConstantBuffer();
-    float state[22];
+    float state[23];
     Address sender;
     int bytes_read = sock.Receive(sender, state, 88);
 
     int start;
     if (bytes_read > 0) {
-        me = (int)(state[21]);
+        me = (int)state[21];
+        owner = (int)state[21];
+        if (owner == me) was_owner = true;
         menu_shown[me] = true;
         for (int i = 0; i < 5; i++) {
             start = i * 3;
@@ -261,8 +265,19 @@ bool Render()
     if (menu) RenderMenu();
     if (!RenderPotatoes()) return false;
 
+    float potx = potato.pos.x;
+    if (!was_owner) potx = FLT_MAX;
+
     g_pSwapChain->Present(0, 0);
-    float data[] = { -cam.position.x, -cam.position.y, -cam.position.z, -FLT_MAX, 0.0f, 0.0f };
+    float data[] = {
+        -cam.position.x,
+        -cam.position.y,
+        -cam.position.z,
+        potx,
+        potato.pos.y,
+        potato.pos.z,
+        potato.owner,
+    };
     sock.Send(Address(L"10.0.0.8", 27015), data, 24);
     return true;
 }
